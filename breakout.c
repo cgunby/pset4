@@ -31,7 +31,7 @@
 #define RADIUS 10
 
 // height and width of paddle
-#define paddlew 20
+#define paddlew 50
 #define paddleh 5
 // lives
 #define LIVES 3
@@ -69,6 +69,8 @@ int main(void)
     // number of bricks initially
     int bricks = COLS * ROWS;
 
+    GRect brick = NULL;
+    
     // number of lives initially
     int lives = LIVES;
 
@@ -76,7 +78,7 @@ int main(void)
     int points = 0;
     
     // initial speed of ball
-    double xvelo = drand48() + 2., yvelo = drand48() + 2.;
+    double xvelo = drand48() + 0.05 , yvelo = drand48() + 0.05;
     // keep playing until game over
     while (lives > 0 && bricks > 0)
     {
@@ -108,7 +110,25 @@ int main(void)
         {
             yvelo = -yvelo /*0, xvelo = 0*/;
         }
-        pause(10); 
+        
+        // collision effects
+        GObject object = detectCollision(window, ball);
+        if (object == paddle)
+        {
+            yvelo = -(yvelo + drand48());   
+        }
+        else if (object != NULL)
+        {    
+            if (strcmp(getType(object), "GRect") == 0) 
+            {
+                removeGWindow(window, object);
+                points++;
+                //git remote set-url origin git://new.url.hereupdateScoreboard(window);
+                yvelo = -yvelo;
+               //TODO TODO  part 9. 
+            }
+        }
+        pause(5);
     }
 
     // wait for click before exiting
@@ -180,12 +200,24 @@ GRect initPaddle(GWindow window)
 }
 
 /**
- * Instantiates, configures, and returns label for scoreboard.
+ * TODO TODO TODO Instantiates, configures, and returns label for scoreboard.
  */
 GLabel initScoreboard(GWindow window)
 {
-    // TODO
-    return NULL;
+    //center label in window
+    
+    GLabel label = newGLabel("0");
+    
+    if (label != NULL)
+    {
+        double x = (getWidth(window) - getWidth(label)) / 2;
+        double y = (getHeight(window) - getHeight(label)) / 2;
+        setFont(label, "SansSerif-40");
+        setColor(label, "LIGHT_GRAY");
+        setLocation(label, x, y);
+        add(window, label);
+    }
+    return label;
 }
 
 /**
